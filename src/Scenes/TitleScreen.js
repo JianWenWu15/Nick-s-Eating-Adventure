@@ -1,11 +1,11 @@
-class Level2 extends Phaser.Scene {
+class TitleScreen extends Phaser.Scene {
     constructor() {
-        super('Level2');
+        super('TitleScreen');
     }
 
     create() {
         // Display a restart message
-        this.add.text(100, 100, 'YAY YOU WON. Next Level in the Works! Press Space to Restart', { fill: '#ffffff' });
+        this.add.text(100, 100, 'Welcome To the Game', { fill: '#ffffff' });
 
         // Wait for the player to press Space
         this.input.keyboard.on('keydown-SPACE', () => {
