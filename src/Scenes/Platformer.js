@@ -139,7 +139,6 @@ class Platformer extends Phaser.Scene {
             if(this.hasKey) {
                 // Move to next level
                 console.log("Player has the key. Moving to next level");
-                this.scene.start("Level2");
             }
         }, null, this);
 
