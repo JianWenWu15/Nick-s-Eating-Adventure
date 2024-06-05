@@ -16,43 +16,48 @@ class Platformer extends Phaser.Scene {
     create() {
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
-        this.map = this.add.tilemap("platformer-level-1", 18, 18, 75, 25);
+        //this.map = this.add.tilemap("platformer-level-1", 18, 18, 75, 25);
+    
 
         // Add a tileset to the map
         // First parameter: name we gave the tileset in Tiled
         // Second parameter: key for the tilesheet (from this.load.image in Load.js)
-        this.tileset = this.map.addTilesetImage("kenny_tilemap_packed", "tilemap_tiles");
+        //this.tileset = this.map.addTilesetImage("kenny_tilemap_packed", "tilemap_tiles");
         //this.tileset = this.map.addTilesetImage("SimpleTileset", "tilemap_tiles");
 
         // Create a layer
-        this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset, 0, 0);
+        // this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset, 0, 0);
 
-        // Create Mushroom layer
-        this.mushroomLayer = this.map.createLayer("Mushrooms", this.tileset, 0, 0);
+        // // Create Mushroom layer
+        // this.mushroomLayer = this.map.createLayer("Mushrooms", this.tileset, 0, 0);
 
-        // Water layer
-        this.waterLayer = this.map.createLayer("Water", this.tileset, 0, 0);
+        // // Water layer
+        // this.waterLayer = this.map.createLayer("Water", this.tileset, 0, 0);
 
         this.jumpSound = this.sound.add("jump");
         this.splashSound = this.sound.add("splash");
 
         this.hasKey = false;
 
+        //let foodObstacles = this.physics.add.group();
+
+        this.nextObstacleTime = 0;
+
 
         
 
         // Make it collidable
-        this.groundLayer.setCollisionByProperty({
-            collides: true
-        });
+        // this.groundLayer.setCollisionByProperty({
+        //     collides: true
+        // });
 
-        this.mushroomLayer.setCollisionByProperty({
-            collides: true
-        });
+        // this.mushroomLayer.setCollisionByProperty({
+        //     collides: true
+        // });
 
-        this.waterLayer.setCollisionByProperty({
-            collides: true
-        });
+        // this.waterLayer.setCollisionByProperty({
+        //     collides: true
+        // });
 
         // TODO: Add createFromObjects here
         // Find coins in the "Objects" layer in Phaser
@@ -61,33 +66,33 @@ class Platformer extends Phaser.Scene {
         // Phaser docs:
         // https://newdocs.phaser.io/docs/3.80.0/focus/Phaser.Tilemaps.Tilemap-createFromObjects
 
-        this.coins = this.map.createFromObjects("Objects", {
-            name: "coin",
-            key: "tilemap_sheet",
-            frame: 151
-        });
+        // this.coins = this.map.createFromObjects("Objects", {
+        //     name: "coin",
+        //     key: "tilemap_sheet",
+        //     frame: 151
+        // });
 
-        this.key = this.map.createFromObjects("Objects", {
-            name: "key",
-            key: "tilemap_sheet",
-            frame: 27
-        });
+        // this.key = this.map.createFromObjects("Objects", {
+        //     name: "key",
+        //     key: "tilemap_sheet",
+        //     frame: 27
+        // });
 
-        this.door = this.map.createFromObjects("Objects", {
-            name: "door",
-            key: "tilemap_sheet",
-            frame: 150
-        });
+        // this.door = this.map.createFromObjects("Objects", {
+        //     name: "door",
+        //     key: "tilemap_sheet",
+        //     frame: 150
+        // });
         
 
         // TODO: Add turn into Arcade Physics here
         // Since createFromObjects returns an array of regular Sprites, we need to convert 
         // them into Arcade Physics sprites (STATIC_BODY, so they don't move) 
-        this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
+        // this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
 
-        this.physics.world.enable(this.key, Phaser.Physics.Arcade.STATIC_BODY);
+        // this.physics.world.enable(this.key, Phaser.Physics.Arcade.STATIC_BODY);
 
-        this.physics.world.enable(this.door, Phaser.Physics.Arcade.STATIC_BODY);
+        // this.physics.world.enable(this.door, Phaser.Physics.Arcade.STATIC_BODY);
 
         // Create a Phaser group out of the array this.coins
         // This will be used for collision detection below.
@@ -95,47 +100,48 @@ class Platformer extends Phaser.Scene {
         
 
         // set up player avatar
-        my.sprite.player = this.physics.add.sprite(30, 345, "platformer_characters", "tile_0022.png");
-        my.sprite.player.setCollideWorldBounds(true);
+        this.nick = this.physics.add.sprite(30, 345, "platformer_characters", "tile_0022.png");
+        //this.nick = this.physics.add.sprite(30, 345, "platformer_characters", "tile_0022.png");
+        this.nick.setCollideWorldBounds(true);
 
-        // Enable collision handling
-        this.physics.add.collider(my.sprite.player, this.groundLayer);
+        // // Enable collision handling
+        // this.physics.add.collider(this.nick, this.groundLayer);
 
-        // Bounce the player when they land on a mushroom
-        // Enable overlap handling for mushrooms
-        this.physics.add.collider(my.sprite.player, this.mushroomLayer, (player, mushroom) => {
-            console.log("Player is touching a mushroom");
-            player.body.velocity.y = -300; // Bounce the player
-            this.jumpSound.play();
+        // // Bounce the player when they land on a mushroom
+        // // Enable overlap handling for mushrooms
+        // this.physics.add.collider(this.nick, this.mushroomLayer, (player, mushroom) => {
+        //     console.log("Player is touching a mushroom");
+        //     player.body.velocity.y = -300; // Bounce the player
+        //     this.jumpSound.play();
             
-        });
+        // });
 
-        // Enable overlap handling for water
-        this.physics.add.collider(my.sprite.player, this.waterLayer, (player, water) => {
-            console.log("Player is touching water");
-            this.splashSound.play();
-            player.body.position.x = 30;
-            player.body.position.y = 345;
-            this.scene.start("RestartScene");
-            //this.scene.restart();
+        // // Enable overlap handling for water
+        // this.physics.add.collider(this.nick, this.waterLayer, (player, water) => {
+        //     console.log("Player is touching water");
+        //     this.splashSound.play();
+        //     player.body.position.x = 30;
+        //     player.body.position.y = 345;
+        //     this.scene.start("RestartScene");
+        //     //this.scene.restart();
             
-        });
+        // });
 
 
 
         // TODO: Add coin collision handler
         // Handle collision detection with coins
-        this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
+        this.physics.add.overlap(this.nick, this.coinGroup, (obj1, obj2) => {
             obj2.destroy(); // remove coin on overlap
         });
 
-        this.physics.add.overlap(my.sprite.player, this.key, (player, key) => {
+        this.physics.add.overlap(this.nick, this.key, (player, key) => {
             key.destroy(); // remove the key
             console.log("Player has the key");
             this.hasKey = true; // player now has the key
         }, null, this);
 
-        this.physics.add.overlap(my.sprite.player, this.door, (player, door) => {
+        this.physics.add.overlap(this.nick, this.door, (player, door) => {
             if(this.hasKey) {
                 // Move to next level
                 console.log("Player has the key. Moving to next level");
@@ -183,8 +189,8 @@ class Platformer extends Phaser.Scene {
         
 
         // TODO: add camera code here
-        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
+        //this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.cameras.main.startFollow(this.nick, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
         
@@ -192,37 +198,51 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
+
+        // Create food obstacles 
+        if (Phaser.Time.Now > this.nextObstacleTime) {
+            let obstacle = foodObstacles.create(game.config.width, Phaser.Math.Between(100, game.config.height - 100), 'coin');
+            obstacle.setVelocityX(-200);
+            this.nextObstacleTime = Phaser.Time.Now + Phaser.Math.Between(1000, 2000);
+        }
+
+        // Detect When this.nick eats food
+        this.physics.add.collider(this.nick, this.foodObstacles, () => {
+            // Increase this.nick's size and decrease his speed
+            this.nick.setScale(this.nick.scale + 0.1);
+            this.nick.setVelocityX(this.nick.velocity.x - 10);
+        }, null, this);
         
         
         if(cursors.left.isDown) {
-            my.sprite.player.setAccelerationX(-this.ACCELERATION);
-            my.sprite.player.resetFlip();
-            my.sprite.player.anims.play('walk', true);
+            this.nick.setAccelerationX(-this.ACCELERATION);
+            this.nick.resetFlip();
+            this.nick.anims.play('walk', true);
             // TODO: add particle following code here
-            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, false);
+            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
 
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
 
             // Only play smoke effect if touching the ground
 
-            if (my.sprite.player.body.blocked.down) {
+            if (this.nick.body.blocked.down) {
 
                 my.vfx.walking.start();
 
             }
 
         } else if(cursors.right.isDown) {
-            my.sprite.player.setAccelerationX(this.ACCELERATION);
-            my.sprite.player.setFlip(true, false);
-            my.sprite.player.anims.play('walk', true);
+            this.nick.setAccelerationX(this.ACCELERATION);
+            this.nick.setFlip(true, false);
+            this.nick.anims.play('walk', true);
             // TODO: add particle following code here
-            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, false);
+            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
 
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
 
             // Only play smoke effect if touching the ground
 
-            if (my.sprite.player.body.blocked.down) {
+            if (this.nick.body.blocked.down) {
 
                 my.vfx.walking.start();
 
@@ -230,9 +250,9 @@ class Platformer extends Phaser.Scene {
 
         } else {
             // Set acceleration to 0 and have DRAG take over
-            my.sprite.player.setAccelerationX(0);
-            my.sprite.player.setDragX(this.DRAG);
-            my.sprite.player.anims.play('idle');
+            this.nick.setAccelerationX(0);
+            this.nick.setDragX(this.DRAG);
+            this.nick.anims.play('idle');
             
             // TODO: have the vfx stop playing
             my.vfx.walking.stop();
@@ -240,22 +260,22 @@ class Platformer extends Phaser.Scene {
 
         // player jump
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
-        if(!my.sprite.player.body.blocked.down) {
-            my.sprite.player.anims.play('jump');
+        if(!this.nick.body.blocked.down) {
+            this.nick.anims.play('jump');
             
             
             
         }
-        if(my.sprite.player.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
-            my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+        if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
+            this.nick.body.setVelocityY(this.JUMP_VELOCITY);
             // play jump sound
             this.jumpSound.play();
 
-            my.vfx.jumping.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, false);
+            my.vfx.jumping.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
             my.vfx.jumping.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.jumping.start();
             
-        } else if(my.sprite.player.body.blocked.down) {
+        } else if(this.nick.body.blocked.down) {
             my.vfx.jumping.stop();
         }
 
@@ -266,14 +286,14 @@ class Platformer extends Phaser.Scene {
         }
 
         //Check if the player is out of bounds and respawn
-        if(my.sprite.player.y > this.map.heightInPixels) {
+        if(this.nick.y > this.game.heightInPixels) {
             this.scene.restart();
         }
 
         // if The player x is greater than the width of the map stop the player
-        if(my.sprite.player.x > this.map.widthInPixels) {
-            my.sprite.player.setVelocityX(0);
-            my.sprite.player.x = this.map.widthInPixels; // Set player's x position to the edge of the map
+        if(this.nick.x > this.game.widthInPixels) {
+            this.nick.setVelocityX(0);
+            this.nick.x = this.map.widthInPixels; // Set player's x position to the edge of the map
         }
 
         
