@@ -26,6 +26,7 @@ class Platformer extends Phaser.Scene {
                 platform.scene.platformPool.add(platform)
             }
         });
+
  
         // of platforms pool
         this.platformPool = this.add.group({
@@ -47,10 +48,17 @@ class Platformer extends Phaser.Scene {
 
         this.jumpSound = this.sound.add("jump");
 
-
-
+        this.obstacleGroup = this.add.group({
+            removeCallback: function(obstacle){
+                
+            }
+        })
+        //Obstacle pool
+        this.obstaclePool = this.add.group();
+        this.obstacles = ["sushi", "pizza", "burger"];
+        this.heightPool = [480,573];
         
-
+        
         // set up player avatar
         this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
         this.nick.body.customSeparateX = true;
@@ -67,8 +75,15 @@ class Platformer extends Phaser.Scene {
             callbackScope: this,
             loop: true
           });
-
-          this.physics.add.collider(this.nick, this.platformGroup);
+        this.time.addEvent({
+            delay: 400, // Adjust the delay as needed
+            callback: this.spawnObstacle,
+            callbackScope: this,
+            loop: true
+        });
+        
+        
+        this.physics.add.collider(this.nick, this.platformGroup);
 
 
         // set up Phaser-provided cursor key input
@@ -101,6 +116,14 @@ class Platformer extends Phaser.Scene {
 
         
 
+    }
+    spawnObstacle(){
+        let obstacle = this.physics.add.sprite( 0, this.sys.game.config.width,0, "pizza");
+        obstacle.setVelocityX(-400); //CHange velocity
+        obstacle.body.allowGravity = false;
+        obstacle.x = this.game.config.width;//set the x to the edge of screen
+        obstacle.y = this.heightPool[Math.floor(Math.random() * 2)]; //set to random between the numbers in this.heightPool
+        this.obstacleGroup.add(obstacle);       
     }
 
     addPlatform(platformWidth, posX){
@@ -174,7 +197,11 @@ class Platformer extends Phaser.Scene {
         }
 
 
-        
+        this.obstacleGroup.getChildren().forEach(obstacle => {
+            if (obstacle.x < 0) {
+                obstacle.destroy(); // Remove obstacle when it goes off-screen
+            }
+        });
 
         
     }
@@ -192,6 +219,7 @@ class Platformer extends Phaser.Scene {
         }
         this.addPlatform(this.game.config.width, nextPlatformX);
       }
+    
 
     // Function to find the rightmost platform in the game to spawn the next platform
     findRightmostPlatform() {
@@ -203,4 +231,5 @@ class Platformer extends Phaser.Scene {
         });
         return rightmostPlatform;
       }
+    
 }

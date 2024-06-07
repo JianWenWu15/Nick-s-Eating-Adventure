@@ -11,7 +11,10 @@ class Load extends Phaser.Scene {
 
         // Load tilemap information
         this.load.image("tilemap_tiles", "tilemap_packed.png");                         // Packed tilemap
-        this.load.image("platform", "platform.png");                         
+        this.load.image("platform", "platform.png");        
+        this.load.image("pizza", "pizza.png");
+        this.load.image("burger", "burger.png");
+        this.load.image("sushi", "sushi.png");                 
         //this.load.image("tilemap_tiles", "platformPack_tilesheet.png");                         // Packed tilemap
         //this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
 
@@ -26,6 +29,7 @@ class Load extends Phaser.Scene {
         // Load Sound
         this.load.audio("jump", "cartoon-jump.mp3");
         this.load.audio("splash", "splash.mp3");
+        
 
         // Oooh, fancy. A multi atlas is a texture atlas which has the textures spread
         // across multiple png files, so as to keep their size small for use with
