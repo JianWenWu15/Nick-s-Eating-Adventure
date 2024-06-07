@@ -1,3 +1,6 @@
+function  obstacleCollide(nick, obstacle){
+    obstacle.destroy();
+}
 class Platformer extends Phaser.Scene {
     constructor() {
         super("platformerScene");
@@ -15,7 +18,7 @@ class Platformer extends Phaser.Scene {
         this.SCALE = 2.0;
         this.platformSpeed = 150;
     }
-
+   
     create() {
 
         // group with all active platforms.
@@ -84,6 +87,7 @@ class Platformer extends Phaser.Scene {
         
         
         this.physics.add.collider(this.nick, this.platformGroup);
+        this.physics.add.collider(this.nick, this.obstacleGroup,obstacleCollide);
 
 
         // set up Phaser-provided cursor key input
@@ -201,6 +205,7 @@ class Platformer extends Phaser.Scene {
             if (obstacle.x < 0) {
                 obstacle.destroy(); // Remove obstacle when it goes off-screen
             }
+
         });
 
         
