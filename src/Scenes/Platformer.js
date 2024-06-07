@@ -53,6 +53,7 @@ class Platformer extends Phaser.Scene {
 
         // set up player avatar
         this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
+        this.nick.body.customSeparateX = true;
         this.nick.setCollideWorldBounds(true);
 
         this.nick.body.debugShowBody = false;
@@ -99,14 +100,6 @@ class Platformer extends Phaser.Scene {
         my.vfx.jumping.stop();
 
         
-        
-
-        // Leaving Code here in case we want to do camera stuff
-        //this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        // this.cameras.main.startFollow(this.nick, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
-        // this.cameras.main.setDeadzone(50, 50);
-        // this.cameras.main.setZoom(this.SCALE);
-        
 
     }
 
@@ -140,20 +133,24 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
-        this.nick.x = 400;
+
+        // match player velocity to platform velocity
+        if (this.nick.x < 400) {
+            this.nick.setVelocityX(400 - this.nick.x);
+        } else {
+            this.nick.setVelocityX(0);
+        }
+
         // player jump
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
         if(!this.nick.body.blocked.down) {
-            this.nick.anims.play('jump');   
+            this.nick.anims.play('jump');
+            this.nick.setVelocityX(0);   
         }
         if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
-            this.nick.setVelocityX(-this.platformSpeed);
             this.nick.body.setVelocityY(this.JUMP_VELOCITY);
             // play jump sound
             this.jumpSound.play();
-            // my.vfx.jumping.startFollow(this.nick, this.nick.displa   yWidth/2-10, this.nick.displayHeight/2-5, false);
-            // my.vfx.jumping.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
-            // my.vfx.jumping.start();
             my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.walking.start();
@@ -172,32 +169,16 @@ class Platformer extends Phaser.Scene {
         }
         
 
-        
-
-        
-
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
         }
 
-        //Check if the player is out of bounds and respawn
-        if(this.nick.y > 350) {
-            //this.scene.restart();
-            //this.nick.y = 345;
-        }
-
-        // if The player x is greater than the width of the map stop the player
-        if(this.nick.x > this.game.widthInPixels) {
-            this.nick.setVelocityX(0);
-            this.nick.x = this.map.widthInPixels; // Set player's x position to the edge of the map
-        }
-
-        console.log(this.nick.y);
 
         
 
         
     }
+
 
     // Function that calls the addPlatform function to spawn the next platform
     spawnNextPlatform() {
