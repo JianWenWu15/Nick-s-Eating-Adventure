@@ -6,6 +6,8 @@ class Platformer extends Phaser.Scene {
     init() {
         // variables and settings
         this.ACCELERATION = 300;
+        this.platformStartSpeed = 200;
+        this.spawnRange = [80, 300];
         this.DRAG = 800;    // DRAG < ACCELERATION = icy slide
         this.physics.world.gravity.y = 1500;
         this.JUMP_VELOCITY = -600;
@@ -14,142 +16,56 @@ class Platformer extends Phaser.Scene {
     }
 
     create() {
-        // Create a new tilemap game object which uses 18x18 pixel tiles, and is
-        // 45 tiles wide and 25 tiles tall.
-        //this.map = this.add.tilemap("platformer-level-1", 18, 18, 75, 25);
-    
 
-        // Add a tileset to the map
-        // First parameter: name we gave the tileset in Tiled
-        // Second parameter: key for the tilesheet (from this.load.image in Load.js)
-        //this.tileset = this.map.addTilesetImage("kenny_tilemap_packed", "tilemap_tiles");
-        //this.tileset = this.map.addTilesetImage("SimpleTileset", "tilemap_tiles");
+        // group with all active platforms.
+        this.platformGroup = this.add.group({
+ 
+            // once a platform is removed, it's added to the pool
+            removeCallback: function(platform){
+                platform.scene.platformPool.add(platform)
+            }
+        });
+ 
+        // of platforms pool
+        this.platformPool = this.add.group({
+ 
+            // once a platform is removed from the pool, it's added to the active platforms group
+            removeCallback: function(platform){
+                platform.scene.platformGroup.add(platform)
+            }
+        });
 
-        // Create a layer
-        // this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset, 0, 0);
+        // Initial platforms to fill the screen
+        let platformWidth = 800;
+        let initialX = 0;
 
-        // // Create Mushroom layer
-        // this.mushroomLayer = this.map.createLayer("Mushrooms", this.tileset, 0, 0);
-
-        // // Water layer
-        // this.waterLayer = this.map.createLayer("Water", this.tileset, 0, 0);
+        while (initialX < this.game.config.width) {
+            this.addPlatform(platformWidth, initialX);
+            initialX += platformWidth;
+        }
 
         this.jumpSound = this.sound.add("jump");
-        this.splashSound = this.sound.add("splash");
-
-        this.hasKey = false;
-
-        //let foodObstacles = this.physics.add.group();
-
-        this.nextObstacleTime = 0;
 
 
-        
 
-        // Make it collidable
-        // this.groundLayer.setCollisionByProperty({
-        //     collides: true
-        // });
-
-        // this.mushroomLayer.setCollisionByProperty({
-        //     collides: true
-        // });
-
-        // this.waterLayer.setCollisionByProperty({
-        //     collides: true
-        // });
-
-        // TODO: Add createFromObjects here
-        // Find coins in the "Objects" layer in Phaser
-        // Look for them by finding objects with the name "coin"
-        // Assign the coin texture from the tilemap_sheet sprite sheet
-        // Phaser docs:
-        // https://newdocs.phaser.io/docs/3.80.0/focus/Phaser.Tilemaps.Tilemap-createFromObjects
-
-        // this.coins = this.map.createFromObjects("Objects", {
-        //     name: "coin",
-        //     key: "tilemap_sheet",
-        //     frame: 151
-        // });
-
-        // this.key = this.map.createFromObjects("Objects", {
-        //     name: "key",
-        //     key: "tilemap_sheet",
-        //     frame: 27
-        // });
-
-        // this.door = this.map.createFromObjects("Objects", {
-        //     name: "door",
-        //     key: "tilemap_sheet",
-        //     frame: 150
-        // });
-        
-
-        // TODO: Add turn into Arcade Physics here
-        // Since createFromObjects returns an array of regular Sprites, we need to convert 
-        // them into Arcade Physics sprites (STATIC_BODY, so they don't move) 
-        // this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
-
-        // this.physics.world.enable(this.key, Phaser.Physics.Arcade.STATIC_BODY);
-
-        // this.physics.world.enable(this.door, Phaser.Physics.Arcade.STATIC_BODY);
-
-        // Create a Phaser group out of the array this.coins
-        // This will be used for collision detection below.
-        this.coinGroup = this.add.group(this.coins);
         
 
         // set up player avatar
-        this.nick = this.physics.add.sprite(30, 345, "platformer_characters", "tile_0022.png");
-        //this.nick = this.physics.add.sprite(30, 345, "platformer_characters", "tile_0022.png");
+        this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
         this.nick.setCollideWorldBounds(true);
 
-        // // Enable collision handling
-        // this.physics.add.collider(this.nick, this.groundLayer);
-
-        // // Bounce the player when they land on a mushroom
-        // // Enable overlap handling for mushrooms
-        // this.physics.add.collider(this.nick, this.mushroomLayer, (player, mushroom) => {
-        //     console.log("Player is touching a mushroom");
-        //     player.body.velocity.y = -300; // Bounce the player
-        //     this.jumpSound.play();
-            
-        // });
-
-        // // Enable overlap handling for water
-        // this.physics.add.collider(this.nick, this.waterLayer, (player, water) => {
-        //     console.log("Player is touching water");
-        //     this.splashSound.play();
-        //     player.body.position.x = 30;
-        //     player.body.position.y = 345;
-        //     this.scene.start("RestartScene");
-        //     //this.scene.restart();
-            
-        // });
-
-
-
-        // TODO: Add coin collision handler
-        // Handle collision detection with coins
-        this.physics.add.overlap(this.nick, this.coinGroup, (obj1, obj2) => {
-            obj2.destroy(); // remove coin on overlap
-        });
-
-        this.physics.add.overlap(this.nick, this.key, (player, key) => {
-            key.destroy(); // remove the key
-            console.log("Player has the key");
-            this.hasKey = true; // player now has the key
-        }, null, this);
-
-        this.physics.add.overlap(this.nick, this.door, (player, door) => {
-            if(this.hasKey) {
-                // Move to next level
-                console.log("Player has the key. Moving to next level");
-            }
-        }, null, this);
-
         
         
+
+        this.time.addEvent({
+            delay: 400, // Adjust the delay as needed
+            callback: this.spawnNextPlatform,
+            callbackScope: this,
+            loop: true
+          });
+
+          this.physics.add.collider(this.nick, this.platformGroup);
+
 
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
@@ -188,30 +104,52 @@ class Platformer extends Phaser.Scene {
         
         
 
-        // TODO: add camera code here
+        // Leaving Code here in case we want to do camera stuff
         //this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        this.cameras.main.startFollow(this.nick, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
-        this.cameras.main.setDeadzone(50, 50);
-        this.cameras.main.setZoom(this.SCALE);
+        // this.cameras.main.startFollow(this.nick, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
+        // this.cameras.main.setDeadzone(50, 50);
+        // this.cameras.main.setZoom(this.SCALE);
         
 
     }
 
+    addPlatform(platformWidth, posX){
+        let platform ;
+        if(this.platformPool.getLength()){
+            platform = this.platformPool.getFirst();
+            if (platform) {
+                platform.x = posX;
+                platform.active = true;
+                platform.visible = true;
+                this.platformPool.remove(platform);
+            }
+            
+        }
+        else {
+            platform = this.physics.add.sprite(posX, game.config.height * 0.8, "platform");
+            platform.setImmovable(true);
+            platform.setVelocityX(150 * -1);
+            platform.body.allowGravity = false;
+            this.platformGroup.add(platform);
+            
+        }
+        if (platform) {
+            platform.displayWidth = platformWidth;
+            this.nextPlatformDistance = Phaser.Math.Between(this.spawnRange[0], this.spawnRange[1]);
+
+        }
+        
+        
+    }
+
     update() {
 
-        // Create food obstacles 
-        if (Phaser.Time.Now > this.nextObstacleTime) {
-            let obstacle = foodObstacles.create(game.config.width, Phaser.Math.Between(100, game.config.height - 100), 'coin');
-            obstacle.setVelocityX(-200);
-            this.nextObstacleTime = Phaser.Time.Now + Phaser.Math.Between(1000, 2000);
-        }
-
-        // Detect When this.nick eats food
-        this.physics.add.collider(this.nick, this.foodObstacles, () => {
-            // Increase this.nick's size and decrease his speed
-            this.nick.setScale(this.nick.scale + 0.1);
-            this.nick.setVelocityX(this.nick.velocity.x - 10);
-        }, null, this);
+        this.platformGroup.getChildren().forEach((platform) => {
+            if (platform.x + platform.displayWidth < 0) {
+              this.platformPool.add(platform);
+              this.platformGroup.remove(platform);
+            }
+          });
         
         
         if(cursors.left.isDown) {
@@ -286,8 +224,9 @@ class Platformer extends Phaser.Scene {
         }
 
         //Check if the player is out of bounds and respawn
-        if(this.nick.y > this.game.heightInPixels) {
-            this.scene.restart();
+        if(this.nick.y > 350) {
+            //this.scene.restart();
+            //this.nick.y = 345;
         }
 
         // if The player x is greater than the width of the map stop the player
@@ -296,8 +235,34 @@ class Platformer extends Phaser.Scene {
             this.nick.x = this.map.widthInPixels; // Set player's x position to the edge of the map
         }
 
+        console.log(this.nick.y);
+
         
 
         
     }
+
+    // Function that calls the addPlatform function to spawn the next platform
+    spawnNextPlatform() {
+        const rightmostPlatform = this.findRightmostPlatform();
+        let nextPlatformX;
+        if (rightmostPlatform) {
+            nextPlatformX = rightmostPlatform.x + rightmostPlatform.displayWidth;
+        } else {
+            // If there's no platform, spawn the new platform at the end of the screen
+            nextPlatformX = this.game.config.width;
+        }
+        this.addPlatform(this.game.config.width, nextPlatformX);
+      }
+
+    // Function to find the rightmost platform in the game to spawn the next platform
+    findRightmostPlatform() {
+        let rightmostPlatform = null;
+        this.platformGroup.getChildren().forEach((platform) => {
+          if (!rightmostPlatform || platform.x > rightmostPlatform.x) {
+            rightmostPlatform = platform;
+          }
+        });
+        return rightmostPlatform;
+      }
 }

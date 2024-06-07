@@ -15,7 +15,7 @@
 // game config
 let config = {
     parent: 'phaser-game',
-    type: Phaser.CANVAS,
+    type: Phaser.AUTO,
     render: {
         pixelArt: true  // prevent pixel art from getting blurred when scaled
     },
@@ -30,7 +30,7 @@ let config = {
         }
     },
     width: 1440,
-    height: 900,
+    height: 750,
     scene: [Load, TitleScreen, Platformer, RestartScene]
 }
 
