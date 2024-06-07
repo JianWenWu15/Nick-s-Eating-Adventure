@@ -143,72 +143,17 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
-
-        this.platformGroup.getChildren().forEach((platform) => {
-            if (platform.x + platform.displayWidth < 0) {
-              this.platformPool.add(platform);
-              this.platformGroup.remove(platform);
-            }
-          });
-        
-        
-        if(cursors.left.isDown) {
-            this.nick.setAccelerationX(-this.ACCELERATION);
-            this.nick.resetFlip();
-            this.nick.anims.play('walk', true);
-            // TODO: add particle following code here
-            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
-
-            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
-
-            // Only play smoke effect if touching the ground
-
-            if (this.nick.body.blocked.down) {
-
-                my.vfx.walking.start();
-
-            }
-
-        } else if(cursors.right.isDown) {
-            this.nick.setAccelerationX(this.ACCELERATION);
-            this.nick.setFlip(true, false);
-            this.nick.anims.play('walk', true);
-            // TODO: add particle following code here
-            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
-
-            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
-
-            // Only play smoke effect if touching the ground
-
-            if (this.nick.body.blocked.down) {
-
-                my.vfx.walking.start();
-
-            }
-
-        } else {
-            // Set acceleration to 0 and have DRAG take over
-            this.nick.setAccelerationX(0);
-            this.nick.setDragX(this.DRAG);
-            this.nick.anims.play('idle');
-            
-            // TODO: have the vfx stop playing
-            my.vfx.walking.stop();
-        }
-
+        this.nick.x = 400;
         // player jump
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
         if(!this.nick.body.blocked.down) {
-            this.nick.anims.play('jump');
-            
-            
-            
+            this.nick.anims.play('jump');   
         }
         if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
+            this.nick.setVelocityX(-150);
             this.nick.body.setVelocityY(this.JUMP_VELOCITY);
             // play jump sound
             this.jumpSound.play();
-
             my.vfx.jumping.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
             my.vfx.jumping.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.jumping.start();
@@ -216,6 +161,18 @@ class Platformer extends Phaser.Scene {
         } else if(this.nick.body.blocked.down) {
             my.vfx.jumping.stop();
         }
+        //Auto walking
+        //Character doesn't move but constantly plays animation
+        //Still need to fix VFX
+        else{
+            this.nick.anims.play('walk', true);
+            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
+            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            my.vfx.walking.start();
+        }
+        
+
+        
 
         
 
