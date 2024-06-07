@@ -13,6 +13,7 @@ class Platformer extends Phaser.Scene {
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
+        this.platformSpeed = 150;
     }
 
     create() {
@@ -54,7 +55,9 @@ class Platformer extends Phaser.Scene {
         this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
         this.nick.setCollideWorldBounds(true);
 
-        
+        this.nick.body.debugShowBody = false;
+        this.nick.body.debugShowVelocity = false;
+        this.nick.setFlipX(true);
         
 
         this.time.addEvent({
@@ -71,12 +74,6 @@ class Platformer extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
 
         this.rKey = this.input.keyboard.addKey('R');
-
-        // debug key listener (assigned to D key)
-        this.input.keyboard.on('keydown-D', () => {
-            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
-            this.physics.world.debugGraphic.clear()
-        }, this);
 
         // TODO: Add movement vfx here
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
@@ -128,7 +125,7 @@ class Platformer extends Phaser.Scene {
         else {
             platform = this.physics.add.sprite(posX, game.config.height * 0.8, "platform");
             platform.setImmovable(true);
-            platform.setVelocityX(150 * -1);
+            platform.setVelocityX(this.platformSpeed * -1);
             platform.body.allowGravity = false;
             this.platformGroup.add(platform);
             
@@ -150,13 +147,16 @@ class Platformer extends Phaser.Scene {
             this.nick.anims.play('jump');   
         }
         if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
-            this.nick.setVelocityX(-150);
+            this.nick.setVelocityX(-this.platformSpeed);
             this.nick.body.setVelocityY(this.JUMP_VELOCITY);
             // play jump sound
             this.jumpSound.play();
-            my.vfx.jumping.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
-            my.vfx.jumping.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
-            my.vfx.jumping.start();
+            // my.vfx.jumping.startFollow(this.nick, this.nick.displa   yWidth/2-10, this.nick.displayHeight/2-5, false);
+            // my.vfx.jumping.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            // my.vfx.jumping.start();
+            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
+            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            my.vfx.walking.start();
             
         } else if(this.nick.body.blocked.down) {
             my.vfx.jumping.stop();
@@ -166,7 +166,7 @@ class Platformer extends Phaser.Scene {
         //Still need to fix VFX
         else{
             this.nick.anims.play('walk', true);
-            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
+            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-30, this.nick.displayHeight/2-5, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.walking.start();
         }
