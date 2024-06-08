@@ -63,7 +63,8 @@ class Platformer extends Phaser.Scene {
         
         
         // set up player avatar
-        this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
+        //this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
+        this.nick = this.physics.add.sprite(30, 245, "nick_spritesheet", "Adventure_Character_Simple-13.png");
         this.nick.body.customSeparateX = true;
         this.nick.setCollideWorldBounds(true);
 
@@ -122,7 +123,8 @@ class Platformer extends Phaser.Scene {
 
     }
     spawnObstacle(){
-        let obstacle = this.physics.add.sprite( 0, this.sys.game.config.width,0, "pizza");
+        let obstacle = this.physics.add.sprite( 0, this.sys.game.config.width,"pizza");
+        
         obstacle.setVelocityX(-400); //CHange velocity
         obstacle.body.allowGravity = false;
         obstacle.x = this.game.config.width;//set the x to the edge of screen
@@ -189,7 +191,7 @@ class Platformer extends Phaser.Scene {
         //Character doesn't move but constantly plays animation
         //Still need to fix VFX
         else{
-            this.nick.anims.play('walk', true);
+            //this.nick.anims.play('walk', true);
             my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-30, this.nick.displayHeight/2-5, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.walking.start();
