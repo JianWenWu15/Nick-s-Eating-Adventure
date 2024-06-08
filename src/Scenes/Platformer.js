@@ -65,12 +65,13 @@ class Platformer extends Phaser.Scene {
         // set up player avatar
         //this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
         this.nick = this.physics.add.sprite(30, 245, "nick_spritesheet", "Adventure_Character_Simple-13.png");
+        this.nick.body.setSize(20, 20, true);
+        
         this.nick.body.customSeparateX = true;
         this.nick.setCollideWorldBounds(true);
 
         this.nick.body.debugShowBody = false;
         this.nick.body.debugShowVelocity = false;
-        this.nick.setFlipX(true);
         
 
         this.time.addEvent({
@@ -97,7 +98,7 @@ class Platformer extends Phaser.Scene {
         this.rKey = this.input.keyboard.addKey('R');
 
         // TODO: Add movement vfx here
-        my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
+        my.vfx.walking = this.add.particles(0, -10, "kenny-particles", {
             frame: ['dirt_03.png', 'dirt_02.png'],
             // TODO: Try: add random: true
             scale: {start: 0.01, end: 0.02},
@@ -174,28 +175,41 @@ class Platformer extends Phaser.Scene {
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
         if(!this.nick.body.blocked.down) {
             this.nick.anims.play('jump');
+            
+            
             this.nick.setVelocityX(0);   
         }
         if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
             this.nick.body.setVelocityY(this.JUMP_VELOCITY);
-            // play jump sound
             this.jumpSound.play();
-            my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-10, this.nick.displayHeight/2-5, false);
-            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
-            my.vfx.walking.start();
-            
-        } else if(this.nick.body.blocked.down) {
+
+        } else if(Phaser.Input.Keyboard.JustDown(cursors.down)) {
+            //Force the player down
+            this.nick.body.setVelocityY(-this.JUMP_VELOCITY);
+
+            this.nick.anims.play('slide');
+            this.time.delayedCall(1000, () => {
+                if (this.nick.body.blocked.down) {
+                    this.nick.anims.stop(); // Stop the slide animation after 2 seconds
+                    this.nick.anims.play('walk', true);
+                }
+            });
+
+        }
+        else if(this.nick.body.blocked.down) {
             my.vfx.jumping.stop();
         }
         //Auto walking
         //Character doesn't move but constantly plays animation
         //Still need to fix VFX
-        else{
-            //this.nick.anims.play('walk', true);
+        else {
+            this.nick.anims.play('walk', true);
             my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-30, this.nick.displayHeight/2-5, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.walking.start();
         }
+
+        
         
 
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {

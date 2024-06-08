@@ -7,8 +7,6 @@ class Load extends Phaser.Scene {
         this.load.setPath("./assets/");
 
         // Load characters spritesheet
-        this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
-
         this.load.atlas("nick_spritesheet", "Nick_Spritesheet2.png", "Nick_Spritesheet2.json");
 
         // Load tilemap information
@@ -21,12 +19,7 @@ class Load extends Phaser.Scene {
         //this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
 
 
-        // Load the tilemap as a spritesheet
-        //this.load.spritesheet("tilemap_sheet", "platformPack_tilesheet.png", {
-        this.load.spritesheet("tilemap_sheet", "tilemap_packed.png", {
-             frameWidth: 18,
-             frameHeight: 18,
-        });
+
 
 
         // Load Sound
@@ -46,23 +39,13 @@ class Load extends Phaser.Scene {
     create() {
         this.anims.create({
             key: 'walk',
-            frames: this.anims.generateFrameNames('platformer_characters', {
-                prefix: "tile_",
-                start: 22,
-                end: 23,
+            frames: this.anims.generateFrameNames('nick_spritesheet', {
+                prefix: "Adventure_Character_Simple-",
+                start: 8,
+                end: 12,
                 suffix: ".png",
-                zeroPad: 4
             }),
             frameRate: 15,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'idle',
-            defaultTextureKey: "platformer_characters",
-            frames: [
-                { frame: "tile_0022.png" }
-            ],
             repeat: -1
         });
 
@@ -86,6 +69,16 @@ class Load extends Phaser.Scene {
             frameRate: 10,
             repeat: -1
         });
+
+        this.anims.create({
+            key: 'slide',
+            defaultTextureKey: 'nick_spritesheet',
+            frames: [
+                { frame: 'Adventure_Character_Simple-77.png' },
+            ],
+            frameRate: 10,
+            
+        });
     
 
          // ...and pass to the next Scene
@@ -95,5 +88,6 @@ class Load extends Phaser.Scene {
 
     // Never get here since a new scene is started in create()
     update() {
+
     }
 }
