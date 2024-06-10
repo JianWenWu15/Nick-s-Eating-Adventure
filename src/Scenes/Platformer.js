@@ -193,6 +193,18 @@ class Platformer extends Phaser.Scene {
         } else if(this.nick.body.blocked.down) {
             my.vfx.jumping.stop();
         }
+
+        //Player slide/fast fall
+        if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.down)){
+            //Slide code
+        }
+        else if(!this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.down)){
+            this.physics.world.gravity.y = 3800;
+        }
+        if(this.nick.body.blocked.down){
+            this.physics.world.gravity.y = 1800;
+        }
+
         //Auto walking
         //Character doesn't move but constantly plays animation
         //Still need to fix VFX
