@@ -29,6 +29,7 @@ let config = {
             }
         }
     },
+    fps: { forceSetTimeOut: true, target: 60 },
     width: 1440,
     height: 750,
     scene: [Load, TitleScreen, Platformer, RestartScene]

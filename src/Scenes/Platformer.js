@@ -12,11 +12,12 @@ class Platformer extends Phaser.Scene {
         this.platformStartSpeed = 200;
         this.spawnRange = [80, 300];
         this.DRAG = 800;    // DRAG < ACCELERATION = icy slide
-        this.physics.world.gravity.y = 1500;
+        this.physics.world.gravity.y = 1800; //initial 1500
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.platformSpeed = 150;
+        this.gameClock = 0;
     }
    
     create() {
@@ -80,7 +81,7 @@ class Platformer extends Phaser.Scene {
             loop: true
           });
         this.time.addEvent({
-            delay: 400, // Adjust the delay as needed
+            delay: 600, // Adjust the delay as needed
             callback: this.spawnObstacle,
             callbackScope: this,
             loop: true
@@ -163,6 +164,10 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
+        //Timer debugging
+        if(this.gameClock%60 == 0)
+        console.log(this.gameClock/60);
+        this.gameClock++;
 
         // match player velocity to platform velocity
         if (this.nick.x < 400) {
