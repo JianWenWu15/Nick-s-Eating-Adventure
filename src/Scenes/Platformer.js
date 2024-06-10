@@ -123,7 +123,8 @@ class Platformer extends Phaser.Scene {
 
     }
     spawnObstacle(){
-        let obstacle = this.physics.add.sprite( 0, this.sys.game.config.width,"pizza");
+        let randObst = this.obstacles[Math.floor(Math.random()*this.obstacles.length)];
+        let obstacle = this.physics.add.sprite( 0, this.sys.game.config.width,randObst);
         
         obstacle.setVelocityX(-400); //CHange velocity
         obstacle.body.allowGravity = false;
