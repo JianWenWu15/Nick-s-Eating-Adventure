@@ -183,6 +183,12 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
+        // background continuous scroll
+        this.backgroundLayer.x -= 1;
+        if(this.backgroundLayer.x < -995){
+            this.backgroundLayer.x = -1;
+        }
+
         //Timer debugging
         //TODO: make platform/obstacle speed scale with game timer
         if(this.gameClock%60 == 0)
