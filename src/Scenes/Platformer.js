@@ -1,3 +1,6 @@
+function  obstacleCollide(nick, obstacle){
+    obstacle.destroy();
+}
 class Platformer extends Phaser.Scene {
     constructor() {
         super("platformerScene");
@@ -9,13 +12,14 @@ class Platformer extends Phaser.Scene {
         this.platformStartSpeed = 200;
         this.spawnRange = [80, 300];
         this.DRAG = 800;    // DRAG < ACCELERATION = icy slide
-        this.physics.world.gravity.y = 1500;
+        this.physics.world.gravity.y = 1800; //initial 1500
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.platformSpeed = 150;
+        this.gameClock = 0;
     }
-
+   
     create() {
         // create the Tilemap
         this.map = this.make.tilemap({ key: 'background' });
@@ -37,6 +41,7 @@ class Platformer extends Phaser.Scene {
                 platform.scene.platformPool.add(platform)
             }
         });
+
  
         // of platforms pool
         this.platformPool = this.add.group({
@@ -46,6 +51,8 @@ class Platformer extends Phaser.Scene {
                 platform.scene.platformGroup.add(platform)
             }
         });
+
+        //TODO: make background/platforms more interesting with textures
 
         // Initial platforms to fill the screen
         let platformWidth = 800;
@@ -58,12 +65,24 @@ class Platformer extends Phaser.Scene {
 
         this.jumpSound = this.sound.add("jump");
 
+        this.obstacleGroup = this.add.group({
+            removeCallback: function(obstacle){
+                
+            }
+        })
+        //Obstacle pool
+        this.obstaclePool = this.add.group();
+        this.obstacles = ["sushi", "pizza", "burger"];
+        this.heightPool = [480,573];
 
-
+        //TODO: add powerups 
+        //maybe also make a guide/infographic for powerups as well for an escape tab
         
-
+        
         // set up player avatar
-        this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
+        //this.nick = this.physics.add.sprite(30, 245, "platformer_characters", "tile_0022.png");
+        //TODO: fix height of character and add slide/crouch animation
+        this.nick = this.physics.add.sprite(30, 245, "nick_spritesheet", "Adventure_Character_Simple-13.png");
         this.nick.body.customSeparateX = true;
         this.nick.setCollideWorldBounds(true);
 
@@ -79,7 +98,17 @@ class Platformer extends Phaser.Scene {
             loop: true
           });
 
-          this.physics.add.collider(this.nick, this.platformGroup);
+        //TODO: Change how spawning works, set spawn timer kinda boring
+        this.time.addEvent({
+            delay: 600, // Adjust the delay as needed
+            callback: this.spawnObstacle,
+            callbackScope: this,
+            loop: true
+        });
+        
+        
+        this.physics.add.collider(this.nick, this.platformGroup);
+        this.physics.add.collider(this.nick, this.obstacleGroup,obstacleCollide);
 
 
         // set up Phaser-provided cursor key input
@@ -87,7 +116,7 @@ class Platformer extends Phaser.Scene {
 
         this.rKey = this.input.keyboard.addKey('R');
 
-        // TODO: Add movement vfx here
+        // TODO: fix up particles current ones are eh
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
             frame: ['dirt_03.png', 'dirt_02.png'],
             // TODO: Try: add random: true
@@ -112,6 +141,16 @@ class Platformer extends Phaser.Scene {
 
         
 
+    }
+    spawnObstacle(){
+        let randObst = this.obstacles[Math.floor(Math.random()*this.obstacles.length)];
+        let obstacle = this.physics.add.sprite( 0, this.sys.game.config.width,randObst);
+        
+        obstacle.setVelocityX(-400); //CHange velocity
+        obstacle.body.allowGravity = false;
+        obstacle.x = this.game.config.width;//set the x to the edge of screen
+        obstacle.y = this.heightPool[Math.floor(Math.random() * 2)]; //set to random between the numbers in this.heightPool
+        this.obstacleGroup.add(obstacle);       
     }
 
     addPlatform(platformWidth, posX){
@@ -144,13 +183,11 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
-        this.backgroundLayer.x -= 1;
-        if (this.backgroundLayer.x < -995) {
-            this.backgroundLayer.x = -1;
-        }
-        console.log(this.backgroundLayer.x);
-       
-
+        //Timer debugging
+        //TODO: make platform/obstacle speed scale with game timer
+        if(this.gameClock%60 == 0)
+        console.log(this.gameClock/60);
+        this.gameClock++;
 
         // match player velocity to platform velocity
         if (this.nick.x < 400) {
@@ -176,11 +213,23 @@ class Platformer extends Phaser.Scene {
         } else if(this.nick.body.blocked.down) {
             my.vfx.jumping.stop();
         }
+
+        //Player slide/fast fall
+        if(this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.down)){
+            //Slide code
+        }
+        else if(!this.nick.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.down)){
+            this.physics.world.gravity.y = 3800;
+        }
+        if(this.nick.body.blocked.down){
+            this.physics.world.gravity.y = 1800;
+        }
+
         //Auto walking
         //Character doesn't move but constantly plays animation
         //Still need to fix VFX
         else{
-            this.nick.anims.play('walk', true);
+            //this.nick.anims.play('walk', true);
             my.vfx.walking.startFollow(this.nick, this.nick.displayWidth/2-30, this.nick.displayHeight/2-5, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             my.vfx.walking.start();
@@ -192,7 +241,12 @@ class Platformer extends Phaser.Scene {
         }
 
 
-        
+        this.obstacleGroup.getChildren().forEach(obstacle => {
+            if (obstacle.x < 0) {
+                obstacle.destroy(); // Remove obstacle when it goes off-screen
+            }
+
+        });
 
         
     }
@@ -210,6 +264,7 @@ class Platformer extends Phaser.Scene {
         }
         this.addPlatform(this.game.config.width, nextPlatformX);
       }
+    
 
     // Function to find the rightmost platform in the game to spawn the next platform
     findRightmostPlatform() {
@@ -221,4 +276,5 @@ class Platformer extends Phaser.Scene {
         });
         return rightmostPlatform;
       }
+    
 }

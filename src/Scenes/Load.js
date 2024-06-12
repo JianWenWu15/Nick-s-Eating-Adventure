@@ -9,11 +9,15 @@ class Load extends Phaser.Scene {
         // Load characters spritesheet
         this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
 
+        this.load.atlas("nick_spritesheet", "Nick_Spritesheet2.png", "Nick_Spritesheet2.json");
+
         // Load tilemap information
         this.load.image("tilemap_tiles", "tilemap_packed.png");                         // Packed tilemap
-        this.load.image("platform", "platform.png");       
-        this.load.image("background_tiles", "tilemap_packed2.png"); 
-        this.load.tilemapTiledJSON("background", "background.tmj");                  
+
+        this.load.image("platform", "platform.png");        
+        this.load.image("pizza", "pizza.png");
+        this.load.image("burger", "burger.png");
+        this.load.image("sushi", "sushi.png");                 
         //this.load.image("tilemap_tiles", "platformPack_tilesheet.png");                         // Packed tilemap
         //this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
 
@@ -25,9 +29,11 @@ class Load extends Phaser.Scene {
              frameHeight: 18,
         });
 
+
         // Load Sound
         this.load.audio("jump", "cartoon-jump.mp3");
         this.load.audio("splash", "splash.mp3");
+        
 
         // Oooh, fancy. A multi atlas is a texture atlas which has the textures spread
         // across multiple png files, so as to keep their size small for use with
@@ -61,13 +67,27 @@ class Load extends Phaser.Scene {
             repeat: -1
         });
 
+        // this.anims.create({
+        //     key: 'jump',
+        //     defaultTextureKey: "platformer_characters",
+        //     frames: [
+        //         { frame: "tile_0023.png" }
+        //     ],
+        // });
+
         this.anims.create({
             key: 'jump',
-            defaultTextureKey: "platformer_characters",
+            defaultTextureKey: 'nick_spritesheet',
             frames: [
-                { frame: "tile_0023.png" }
+                { frame: 'Adventure_Character_Simple-13.png' },
+                { frame: 'Adventure_Character_Simple-14.png' },
+                { frame: 'Adventure_Character_Simple-15.png' },
+                // Add more frames as needed
             ],
+            frameRate: 10,
+            repeat: -1
         });
+    
 
          // ...and pass to the next Scene
          //this.scene.start("platformerScene");

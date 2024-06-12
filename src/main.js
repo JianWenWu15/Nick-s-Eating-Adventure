@@ -22,13 +22,14 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
             gravity: {
                 x: 0,
                 y: 0
             }
         }
     },
+    fps: { forceSetTimeOut: true, target: 60 },
     width: 1440,
     height: 750,
     scene: [Load, TitleScreen, Platformer, RestartScene]
