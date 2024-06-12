@@ -17,6 +17,17 @@ class Platformer extends Phaser.Scene {
     }
 
     create() {
+        // create the Tilemap
+        this.map = this.make.tilemap({ key: 'background' });
+
+        // add the tileset image we are using
+        this.tileset = this.map.addTilesetImage('background-packed', 'background_tiles');
+        
+        // create the layers we want in the right order
+        this.backgroundLayer = this.map.createLayer("Background", this.tileset, 0, 250);
+        this.backgroundLayer.setScale(1.55);
+
+        this.cameras.main.setBackgroundColor("#bae9ff");
 
         // group with all active platforms.
         this.platformGroup = this.add.group({
@@ -133,6 +144,13 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
+        this.backgroundLayer.x -= 1;
+        if (this.backgroundLayer.x < -995) {
+            this.backgroundLayer.x = -1;
+        }
+        console.log(this.backgroundLayer.x);
+       
+
 
         // match player velocity to platform velocity
         if (this.nick.x < 400) {
