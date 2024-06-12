@@ -79,7 +79,7 @@ class Platformer extends Phaser.Scene {
         //Obstacle pool
         this.obstaclePool = this.add.group();
         this.obstacles = ["sushi", "pizza", "burger"];
-        this.heightPool = [480,573];
+        this.heightPool = [480,550,573];
 
         //TODO: add powerups 
         //maybe also make a guide/infographic for powerups as well for an escape tab
@@ -159,7 +159,8 @@ class Platformer extends Phaser.Scene {
         obstacle.setVelocityX(-400); //CHange velocity
         obstacle.body.allowGravity = false;
         obstacle.x = this.game.config.width;//set the x to the edge of screen
-        obstacle.y = this.heightPool[Math.floor(Math.random() * 2)]; //set to random between the numbers in this.heightPool
+        obstacle.y = this.heightPool[Math.floor(Math.random() * this.heightPool.length)]; //set to random between the numbers in this.heightPool
+        console.log(obstacle.y);
         this.obstacleGroup.add(obstacle);       
     }
 
