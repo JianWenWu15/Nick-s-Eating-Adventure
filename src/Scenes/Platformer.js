@@ -1,6 +1,7 @@
 function  obstacleCollide(nick, obstacle){
     obstacle.destroy();
     nick.weight++;
+    nick.multiplier = 30;
     console.log("weight up");
     nick.lastHit = 1;
     if(nick.weight >= nick.positions.length){
@@ -103,6 +104,7 @@ class Platformer extends Phaser.Scene {
         this.nick.setFlipX(true);
         this.nick.positions = [800,600,400,200,0];
         this.nick.lastHit = 1; //cant be 0
+        this.nick.multiplier = 30;
 
         // text display of nick's weight 
         this.pounds = this.nick.weight + 1 * 100; 
@@ -221,6 +223,7 @@ class Platformer extends Phaser.Scene {
 
         if(this.gameClock%60 ==0 && this.nick.lastHit %5 ==0 && this.nick.weight >0) {
             this.nick.weight--;
+            this.nick.multiplier = 10;
             console.log("weight down");
         }
 
@@ -228,7 +231,7 @@ class Platformer extends Phaser.Scene {
             this.pounds = this.nick.weight+1*100;
             this.weight.setText(`${this.pounds} LBS`);
         } else{
-            this.pounds = 100+this.nick.weight*10; 
+            this.pounds = 100+this.nick.weight*this.nick.multiplier; 
             this.weight.setText(`${this.pounds} LBS`);
         }
 
