@@ -21,6 +21,10 @@ class Platformer extends Phaser.Scene {
     }
    
     create() {
+        // text display of score
+        this.score = this.add.text(900, 50, "SCORE: " + this.gameClock)
+            .setFontSize(30);
+
         // create the Tilemap
         this.map = this.make.tilemap({ key: 'background' });
 
@@ -194,6 +198,7 @@ class Platformer extends Phaser.Scene {
         if(this.gameClock%60 == 0)
         console.log(this.gameClock/60);
         this.gameClock++;
+        this.score.setText("SCORE: " + this.gameClock);
 
         // match player velocity to platform velocity
         if (this.nick.x < 400) {
@@ -282,5 +287,5 @@ class Platformer extends Phaser.Scene {
         });
         return rightmostPlatform;
       }
-    
+
 }
