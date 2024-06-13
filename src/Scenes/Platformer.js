@@ -202,7 +202,7 @@ class Platformer extends Phaser.Scene {
 
     update() {
         if(this.nick.gamestate == false){
-            this.scene.start('RestartScene');
+            this.scene.start('RestartScene',{score: this.gameClock});
         }
         // background continuous scroll
         this.backgroundLayer.x -= 1;

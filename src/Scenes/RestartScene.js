@@ -2,14 +2,16 @@ class RestartScene extends Phaser.Scene {
     constructor() {
         super('RestartScene');
     }
-
+    init(data){
+        this.score = data.score;
+    }
     create() {
         // Display a restart message
         this.add.text(100, 100, 'Game Over. Press Space to Restart', { fill: '#ffffff' })
             .setFontSize(35);
         this.add.text(100, 600, 'Credits: Ian Liu, Jianwen Wu, Trinity Wu', { fill: '#ffffff' })
             .setFontSize(25);
-        this.add.text(550, 200, "Score")
+        this.add.text(550, 200, "Score: " + this.score)
             .setFontSize(50);
 
         this.cameras.main.setBackgroundColor("#bae9ff");
