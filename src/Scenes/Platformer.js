@@ -71,13 +71,9 @@ class Platformer extends Phaser.Scene {
 
         this.jumpSound = this.sound.add("jump");
 
-        this.obstacleGroup = this.add.group({
-            removeCallback: function(obstacle){
-                
-            }
-        })
+        this.obstacleGroup = this.add.group()
         //Obstacle pool
-        this.obstaclePool = this.add.group();
+
         this.obstacles = ["sushi", "pizza", "burger"];
         this.heightPool = [480,550,573];
 
