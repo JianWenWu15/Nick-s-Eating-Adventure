@@ -36,6 +36,7 @@ class Load extends Phaser.Scene {
         // Load Sound
         this.load.audio("jump", "cartoon-jump.mp3");
         this.load.audio("splash", "splash.mp3");
+        this.load.audio("background_music", "bgmusic.mp3");
         
 
         // Oooh, fancy. A multi atlas is a texture atlas which has the textures spread
