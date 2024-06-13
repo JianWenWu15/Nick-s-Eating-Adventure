@@ -92,7 +92,7 @@ class Platformer extends Phaser.Scene {
         this.nick = this.physics.add.sprite(30, 245, "nick_spritesheet", "Adventure_Character_Simple-13.png");
         this.nick.body.customSeparateX = true;
         this.nick.setCollideWorldBounds(true);
-
+        this.nick.body.setSize(20, 20, true);
         this.nick.body.debugShowBody = false;
         this.nick.weight = 0;
         this.nick.gamestate = true;
