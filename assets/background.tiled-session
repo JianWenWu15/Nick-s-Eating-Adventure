@@ -7,11 +7,11 @@
             "scaleInDock": 1
         },
         "background.tmx": {
-            "scale": 0.8782,
+            "scale": 0.5937,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1071.509906627192,
-                "y": 264.74607150990664
+                "x": 1581.6068721576555,
+                "y": 90.11285160855658
             }
         },
         "background.tmx#background-packed": {
