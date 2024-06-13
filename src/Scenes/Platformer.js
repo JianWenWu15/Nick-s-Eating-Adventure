@@ -27,6 +27,10 @@ class Platformer extends Phaser.Scene {
     }
    
     create() {
+        // text display of score
+        this.score = this.add.text(900, 50, "SCORE: " + this.gameClock)
+            .setFontSize(30);
+
         // create the Tilemap
         this.map = this.make.tilemap({ key: 'background' });
 
@@ -208,6 +212,7 @@ class Platformer extends Phaser.Scene {
         if(this.gameClock%60 == 0)
             this.nick.lastHit++;
         this.gameClock++;
+
         if(this.gameClock%60 ==0 && this.nick.lastHit %5 ==0 && this.nick.weight >0) {
             this.nick.weight--;
             console.log("weight down");
@@ -300,5 +305,5 @@ class Platformer extends Phaser.Scene {
         });
         return rightmostPlatform;
       }
-    
+
 }
