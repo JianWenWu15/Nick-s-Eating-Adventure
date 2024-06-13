@@ -1,5 +1,11 @@
 function  obstacleCollide(nick, obstacle){
     obstacle.destroy();
+    nick.weight++;
+    console.log("weight up");
+    nick.lastHit = 1;
+    if(nick.weight >= nick.positions.length){
+        nick.gamestate = false;
+    }
 }
 class Platformer extends Phaser.Scene {
     constructor() {
@@ -77,7 +83,7 @@ class Platformer extends Phaser.Scene {
         //Obstacle pool
         this.obstaclePool = this.add.group();
         this.obstacles = ["sushi", "pizza", "burger"];
-        this.heightPool = [480,573];
+        this.heightPool = [480,550,573];
 
         //TODO: add powerups 
         //maybe also make a guide/infographic for powerups as well for an escape tab
@@ -91,8 +97,12 @@ class Platformer extends Phaser.Scene {
         this.nick.setCollideWorldBounds(true);
 
         this.nick.body.debugShowBody = false;
+        this.nick.weight = 0;
+        this.nick.gamestate = true;
         this.nick.body.debugShowVelocity = false;
         this.nick.setFlipX(true);
+        this.nick.positions = [800,600,400,200,0];
+        this.nick.lastHit = 1; //cant be 0
         
 
         this.time.addEvent({
@@ -153,7 +163,8 @@ class Platformer extends Phaser.Scene {
         obstacle.setVelocityX(-400); //CHange velocity
         obstacle.body.allowGravity = false;
         obstacle.x = this.game.config.width;//set the x to the edge of screen
-        obstacle.y = this.heightPool[Math.floor(Math.random() * 2)]; //set to random between the numbers in this.heightPool
+        obstacle.y = this.heightPool[Math.floor(Math.random() * this.heightPool.length)]; //set to random between the numbers in this.heightPool
+        console.log(obstacle.y);
         this.obstacleGroup.add(obstacle);       
     }
 
@@ -187,6 +198,9 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
+        if(this.nick.gamestate == false){
+            this.scene.start('RestartScene');
+        }
         // background continuous scroll
         this.backgroundLayer.x -= 1;
         if(this.backgroundLayer.x < -995){
@@ -196,13 +210,17 @@ class Platformer extends Phaser.Scene {
         //Timer debugging
         //TODO: make platform/obstacle speed scale with game timer
         if(this.gameClock%60 == 0)
-        console.log(this.gameClock/60);
+            this.nick.lastHit++;
         this.gameClock++;
-        this.score.setText("SCORE: " + this.gameClock);
+
+        if(this.gameClock%60 ==0 && this.nick.lastHit %5 ==0 && this.nick.weight >0) {
+            this.nick.weight--;
+            console.log("weight down");
+        }
 
         // match player velocity to platform velocity
-        if (this.nick.x < 400) {
-            this.nick.setVelocityX(400 - this.nick.x);
+        if (this.nick.x < this.nick.positions[this.nick.weight]) {
+            this.nick.setVelocityX(this.nick.positions[this.nick.weight] - this.nick.x);
         } else {
             this.nick.setVelocityX(0);
         }
