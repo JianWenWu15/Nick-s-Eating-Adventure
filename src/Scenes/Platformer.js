@@ -103,6 +103,11 @@ class Platformer extends Phaser.Scene {
         this.nick.setFlipX(true);
         this.nick.positions = [800,600,400,200,0];
         this.nick.lastHit = 1; //cant be 0
+
+        // text display of nick's weight 
+        this.pounds = this.nick.weight + 1 * 100; 
+        this.weight = this.add.text(100, 50, `${this.pounds} LBS`)
+            .setFontSize(30);
         
 
         this.time.addEvent({
@@ -217,6 +222,14 @@ class Platformer extends Phaser.Scene {
         if(this.gameClock%60 ==0 && this.nick.lastHit %5 ==0 && this.nick.weight >0) {
             this.nick.weight--;
             console.log("weight down");
+        }
+
+        if(this.nick.weight < 1){
+            this.pounds = this.nick.weight+1*100;
+            this.weight.setText(`${this.pounds} LBS`);
+        } else{
+            this.pounds = 100+this.nick.weight*10; 
+            this.weight.setText(`${this.pounds} LBS`);
         }
 
         // match player velocity to platform velocity
