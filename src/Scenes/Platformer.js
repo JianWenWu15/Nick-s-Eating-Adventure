@@ -212,6 +212,7 @@ class Platformer extends Phaser.Scene {
         if(this.gameClock%60 == 0)
             this.nick.lastHit++;
         this.gameClock++;
+        this.score.setText("SCORE: " + this.gameClock);
 
         if(this.gameClock%60 ==0 && this.nick.lastHit %5 ==0 && this.nick.weight >0) {
             this.nick.weight--;
